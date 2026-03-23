@@ -279,8 +279,8 @@ xgb_random_t = GridSearchCV(estimator=xgb_model_t, param_grid=treegrid,
                                 scoring='f1', n_jobs=-1, cv=cv_strat, verbose=3)
 xgb_random_t.fit(x_train_f, y_train_f)
 print(xgb_random_t.best_params_)
-##best_estimators=1000
-
+best_estimators=300
+best_eta=0.01
 grid1 = {
     "gamma": [0,3,5,9],
      "max_depth": [3,  5, 7],
@@ -295,7 +295,9 @@ xgb_random = RandomizedSearchCV(estimator=xgb_model1, param_distributions=grid1,
                                 scoring='f1', n_jobs=-1, cv=cv_strat, verbose=3)
 xgb_random.fit(x_train_f, y_train_f)
 print(xgb_random.best_params_)
-
+best_max_depth=3
+best_child_weight=3
+best_gamma=5
 
 grid2 = {
  "subsample":[0.4, 0.5 ,0.6, 0.7, 0.9,],
@@ -314,11 +316,7 @@ xgb_random2.fit(x_train_f, y_train_f)
 print(xgb_random2.best_params_)
 best_subsample=0.9
 best_colsample=0.6
-best_estimators=300
-best_eta=0.01
-best_max_depth=3
-best_child_weight=3
-best_gamma=5
+
 
 tuned_params = { 
     'n_estimators': best_estimators,
