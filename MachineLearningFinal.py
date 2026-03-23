@@ -9,7 +9,7 @@ from plotnine import *
 import xgboost as xgb # For XGBoost
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedShuffleSplit,RandomizedSearchCV, train_test_split
-
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder,OrdinalEncoder
