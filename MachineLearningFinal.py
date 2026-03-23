@@ -78,10 +78,19 @@ y=heart_data_log['HadHeartAttack']
 
 x_train_l, x_test_l, y_train_l, y_test_l=train_test_split(x_log,y,test_size=0.2, stratify=y, random_state=45)
 
-log_reg = sm.Logit(y, x_log).fit()
+
+scaler = StandardScaler()
+
+
+numeric_cols = ['HeightInMeters', 'WeightInKilograms', 'BMI', 'SleepHours', 'MentalHealthDays', 'PhysicalHealthDays', 'AgeCategory']
+
+
+x_train_l[numeric_cols] = scaler.fit_transform(x_train_l[numeric_cols])
+x_test_l[numeric_cols] = scaler.transform(x_test_l[numeric_cols])
+
+log_reg = sm.Logit(y_train_l, x_train_l).fit()
 print(log_reg.summary2())
 prob1= log_reg.predict(x_test_l)
-
 
 y_predicted = (prob1 >= 0.5).astype(int) 
 print("\nConfusion matrix:")
