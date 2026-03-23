@@ -24,11 +24,14 @@ scaled_weight=scaled_weight*0.5
 
 # Insights and Recommendations
 - Using SHAP values the features most correlated with heart disease are Angina(chest pain or discomfort occurring when heart muscle receives insufficient oxygenated blood) history, old age, patients who had difficulty walking, current/former smokers, as well as stroke or diabetes history.
+
+<img width="490" height="413" alt="Screenshot 2026-03-23 at 7 43 32 PM" src="https://github.com/user-attachments/assets/85d79db8-73d9-4c8d-9105-eae2713753de" />
+
 -Aggressive management of cholesterol and blood pressure to avoid Angina.
 -Increased screening frequency for diabetic patients and those over age 65.
 -Lifestyle interventions focusing on smoking cessation, as former smokers still carry significant residual risk.
 
-#Neccesary Installs and Usage
+# Neccesary Installs and Usage
 -Installs: pandas, numpy, matplotlib, seaborn, plotnine, scikit-learn, xgboost, shap, statsmodels, imbalanced-learn
 - Run python script to see in depth results (NOTE runtimes may be longer than expected due to hyperparameter tuning)
   
