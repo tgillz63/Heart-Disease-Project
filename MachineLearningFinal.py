@@ -1,27 +1,21 @@
-import matplotlib
 
-import matplotlib.pyplot as plt
-import shap
 from plotnine import *
-import pandas as pd  # 
-import numpy as np   #
-from plotnine import *  
-import xgboost as xgb # For XGBoost
+import pandas as pd  
+import numpy as np   
+import xgboost as xgb 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import StratifiedShuffleSplit,RandomizedSearchCV, train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit,RandomizedSearchCV, GridSearchCV , train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder,OrdinalEncoder
 from sklearn.model_selection import ParameterGrid ,StratifiedKFold
-from tqdm import tqdm  # progress bar
 import matplotlib.pyplot as plt
 import shap
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.preprocessing import StandardScaler
 import statsmodels.api as sm
 from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import average_precision_score
 
@@ -338,8 +332,7 @@ xgb_tuned = xgb.train(
              evals=watchlist,
     verbose_eval=50
  )    
-
-test_pred2 = xgb_tuned.predict(dtrain)
+test_pred2 = xgb_tuned.predict(dtest)
 
 #
 test_pred_cls2 = (test_pred2 >= 0.40).astype(int)
@@ -347,6 +340,14 @@ auc = roc_auc_score(y_test_f, test_pred2)
 print(f"AUC-ROC: {auc:.3f}")
 
 
+test_pred2 = xgb_tuned.predict(dtest) 
+
+auc_val = roc_auc_score(y_test_f, test_pred2)
+print(f"AUC-ROC: {auc_val:.3f}")
+
+
+test_pred_cls2 = (test_pred2 >= 0.40).astype(int)
+print(classification_report(y_test_f, test_pred_cls2))
 
 
 print("\nConfusion matrix:")
@@ -373,7 +374,7 @@ from sklearn.metrics import precision_recall_curve
 precision_rf, recall_rf, thresholds = precision_recall_curve(y_test_f, y_prob_rf)
 precision_xgb, recall_xgb, thresholds = precision_recall_curve(y_test_f, y_prob_xgb)
 
-avg_precision_xgb = average_precision_score(y_test_f, y_prob_rf)
+avg_precision_xgb = average_precision_score(y_test_f, y_prob_xgb)
 avg_precision_rf = average_precision_score(y_test_f, y_prob_rf)
 
 
@@ -388,11 +389,12 @@ rf_prc.show()
 
 
 # Calculate ROC curves
+from sklearn import metrics
 fpr_rf, tpr_rf, _ = roc_curve(y_test_f, y_prob_rf)
-roc_auc_rf = auc(fpr_rf, tpr_rf)
+roc_auc_rf = metrics.auc(fpr_rf, tpr_rf)
 
 fpr_xgb, tpr_xgb, _ = roc_curve(y_test_f, y_prob_xgb)
-roc_auc_xgb = auc(fpr_xgb, tpr_xgb)
+roc_auc_xgb = metrics.auc(fpr_xgb, tpr_xgb)
 
 roc_crv=(
      ggplot()
@@ -404,21 +406,30 @@ roc_crv=(
  )
 roc_crv.show()
 
-#Shap value visualizations 
+import shap
 
-shap.plots.beeswarm(shap_values, max_display=25).show()
-
-
+shap_test_subset = x_test_f.sample(500, random_state=45) 
 explainer = shap.TreeExplainer(xgb_tuned)
-shap_values = explainer(x_train_f)
-shap.plots.bar(shap_values, max_display=25)
-plt.show()  
-
-shap.plots.beeswarm(shap_values, max_display=25)
-plt.show()  
 
 
-# Waterfall
-shap.plots.waterfall(shap_values[19005], max_display=25)
+dtest_shap = xgb.DMatrix(shap_test_subset)
+shap_values = explainer(dtest_shap)
 
 
+shap_values.feature_names = list(shap_test_subset.columns)
+shap_values.data = shap_test_subset.values 
+
+plt.figure(figsize=(10, 8))
+shap.plots.bar(shap_values, max_display=25, show=False)
+plt.title("Global Feature Importance (XGBoost)")
+plt.show()
+
+
+plt.figure(figsize=(10, 8))
+shap.plots.beeswarm(shap_values, max_display=25, show=False)
+plt.show()
+
+
+plt.figure(figsize=(10, 8))
+shap.plots.waterfall(shap_values[0], max_display=25)
+plt.show()
