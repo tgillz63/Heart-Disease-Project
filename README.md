@@ -5,7 +5,7 @@ Heart disease is the leading cause of death globally, accounting for almost 32% 
 
 # Methods 
 1. **Preprocessing** -Encoded categorical features, scaled numeric features in logistic regression to normalize ranges of these features, converted age category from a range to midpoint of the range to make the feature easier to digest for models.
-2. **Handling Class Imbalance** - Given the 5.46% minority class, adjustments had to be made to account for the imbalance. For the random forest I used class_weight='balanced' which automatically calculates class weights inversely proportional to class frequency. For the XGBoost I did essentially the same thing but calculated the scale_pos_weight manually and then multiplied it by 0.5 to dampen what was orginally too agressive of a correction. I also evaluated models across multiple probability thresholds (0.10 to 0.50) to find the optimal balance between Precision and Recall. Due to the class imbalance simple accuracy doesn't cut it for a performance metric, so others that prioritize identifying the minority class were used (recall, percision, F-1 score). 
+2. **Handling Class Imbalance** - Given the 5.46% minority class, adjustments had to be made to account for the imbalance. For the random forest I used class_weight='balanced' which automatically calculates class weights inversely proportional to class frequency. For the XGBoost I did essentially the same thing but calculated the scale_pos_weight manually and then multiplied it by 0.5 to dampen what was originally too aggressive of a correction. I also evaluated models across multiple probability thresholds (0.10 to 0.50) to find the optimal balance between Precision and Recall. Due to the class imbalance, simple accuracy doesn't cut it for a performance metric, so others that prioritize identifying the minority class were used (recall, precision, ROC_AUC, F-1 score). 
 ```
 ## base random forrest
 rf = RandomForestClassifier(class_weight='balanced',random_state=45, verbose=2 )
@@ -36,7 +36,7 @@ scaled_weight=scaled_weight*0.5
 -Increased screening frequency for diabetic patients and those over age 65.
 -Lifestyle interventions focusing on smoking cessation, as former smokers still carry significant residual risk.
 
-# Neccesary Installs and Usage
+# Necesary Installs and Usage
 -Installs: pandas, numpy, matplotlib, seaborn, plotnine, scikit-learn, xgboost, shap, statsmodels, imbalanced-learn
 - Run python script to see in depth results (NOTE runtimes may be longer than expected due to hyperparameter tuning)
   
