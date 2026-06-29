@@ -15,7 +15,7 @@ This project builds a model to flag people who have had a heart attack, using th
 
 ---
 
-> ### TL;DR
+> ### Too Long; Didn't Read 
 > - **The problem.** Cardiovascular disease is the leading cause of death worldwide, behind close to a third of all deaths. This project builds a model to flag people who have had a heart attack, using the 2022 CDC BRFSS health survey.
 > - **The real challenge.** Only about 5% of respondents are positive cases. That imbalance makes plain accuracy meaningless and turns the task into catching a rare event without burying it in false alarms.
 > - **The build.** Three models in increasing order of muscle, logistic regression, random forest, and a staged-tuned XGBoost, all judged on recall, precision, ROC-AUC, and F1 rather than accuracy.
@@ -52,7 +52,7 @@ The difficulty is baked into the data. Heart attacks are rare in the general pop
 
 ---
 
-## 2. What Makes This Hard
+## 2. Challenges 
 
 A rare-event classification problem punishes the obvious approach. With positives sitting near 5% of the data, a model can post a 95% accuracy score by never flagging anyone at all, so accuracy has to be thrown out as a measure of success from the start.
 
@@ -138,13 +138,13 @@ I built up from a simple baseline to a tuned gradient-boosted model, so each ste
 
 The two tree models land in a near-tie on ROC-AUC, with XGBoost pulling clear on recall, which is the metric that matters most when the goal is catching real cases. I compared them directly on ROC and precision-recall curves.
 
-![ROC curves for the tuned random forest and XGBoost](reports/figures/roc_curve_comparison.png)
+<img width="371" height="277" alt="Screenshot 2026-06-29 at 5 57 36 PM" src="https://github.com/user-attachments/assets/8f558931-8231-46e9-b0bc-62575ed9b6ae" />
 
 *ROC curves for the tuned random forest and XGBoost models.*
 
-![Precision-recall curves for the tuned random forest and XGBoost](reports/figures/pr_curve_comparison.png)
+<img width="369" height="278" alt="Screenshot 2026-06-29 at 5 58 09 PM" src="https://github.com/user-attachments/assets/a84ba251-3402-4f72-8f56-4778941386f6" />
 
-*Precision-recall curves for both tuned models, where the imbalance shows its teeth.*
+*Precision-recall curves for both tuned models, where the imbalance shows.*
 
 ---
 
@@ -152,19 +152,19 @@ The two tree models land in a near-tie on ROC-AUC, with XGBoost pulling clear on
 
 A health-risk model that cannot explain itself is hard to trust and harder to act on. I ran SHAP on the tuned XGBoost model over a sample of the test set to see what it leaned on, both across the population and for individual predictions.
 
-![Global SHAP feature importance for the tuned XGBoost model](reports/figures/shap_global_importance.png)
+<img width="369" height="374" alt="Screenshot 2026-06-29 at 5 59 19 PM" src="https://github.com/user-attachments/assets/3240344d-ab4a-46ca-8d86-08954cd4da57" />
 
 *Global feature importance from SHAP on the tuned XGBoost model.*
 
 The strongest signals were a history of angina, older age, difficulty walking, current or former smoking, and a history of stroke or diabetes. The beeswarm view adds direction, showing how each feature pushed risk up or down across respondents.
 
-![SHAP beeswarm of feature effects across respondents](reports/figures/shap_beeswarm.png)
+<img width="371" height="310" alt="Screenshot 2026-06-29 at 5 59 55 PM" src="https://github.com/user-attachments/assets/263cfdf1-3c55-4384-871c-7819ae5eaa7f" />
 
 *SHAP beeswarm showing each feature's effect across the sampled respondents.*
 
 SHAP also breaks down a single prediction, which turns an abstract risk score into a specific, explainable call for one person.
 
-![SHAP waterfall for a single respondent](reports/figures/shap_waterfall_example.png)
+<img width="370" height="443" alt="Screenshot 2026-06-29 at 6 00 29 PM" src="https://github.com/user-attachments/assets/d8a0b7b4-7e8c-4f8d-af6a-3c6ac94cdb89" />
 
 *SHAP waterfall decomposing the risk prediction for one respondent.*
 
