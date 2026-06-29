@@ -25,7 +25,7 @@ This project builds a model to flag people who have had a heart attack, using th
 
 ## Table of Contents
 1. [The Problem](#1-the-problem)
-2. [What Makes This Hard](#2-what-makes-this-hard)
+2. [What Makes This Project Difficult](#2-what-makes-this-problem-difficult)
 3. [System Overview](#3-system-overview)
 4. [The Data](#4-the-data)
 5. [Preprocessing and Feature Engineering](#5-preprocessing-and-feature-engineering)
@@ -52,7 +52,7 @@ The difficulty is baked into the data. Heart attacks are rare in the general pop
 
 ---
 
-## 2. Challenges 
+## 2. What Makes This Project Difficult
 
 A rare-event classification problem punishes the obvious approach. With positives sitting near 5% of the data, a model can post a 95% accuracy score by never flagging anyone at all, so accuracy has to be thrown out as a measure of success from the start.
 
