@@ -65,19 +65,12 @@ x['AgeCategory']=x['AgeCategory'].str.split().str[1].astype(float)
 x['AgeCategory']=x['AgeCategory']+2
 x=x.drop('HadHeartAttack', axis=1)
 
-#lgistic regression
-
+#logistic regression baseline
 x_log=sm.add_constant(x)
 y=heart_data_log['HadHeartAttack']
-
 x_train_l, x_test_l, y_train_l, y_test_l=train_test_split(x_log,y,test_size=0.2, stratify=y, random_state=45)
-
-
 scaler = StandardScaler()
-
-
 numeric_cols = ['HeightInMeters', 'WeightInKilograms', 'BMI', 'SleepHours', 'MentalHealthDays', 'PhysicalHealthDays', 'AgeCategory']
-
 
 x_train_l[numeric_cols] = scaler.fit_transform(x_train_l[numeric_cols])
 x_test_l[numeric_cols] = scaler.transform(x_test_l[numeric_cols])
@@ -89,13 +82,11 @@ prob1= log_reg.predict(x_test_l)
 y_predicted = (prob1 >= 0.5).astype(int) 
 print("\nConfusion matrix:")
 cm = (confusion_matrix(y_test_l, y_predicted))
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)# Set class labels
-disp.plot(cmap="Blues") # Set color map
-plt.title("Confusion Matrix — XGBoost") # Set title
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot(cmap="Blues") 
+plt.title("Confusion Matrix — Logistic Regression") 
 plt.show() # Display plot
 print("\nAccuracy):")
-
-
 
 ## select x and y columns for random forrest
 x_for=heart_data_fb.drop(columns=['HadHeartAttack'], axis=1)
@@ -123,15 +114,14 @@ print(f"PR-AUC: {average_precision_score(y_test_f, y_prob):.3f}")
 
 print("\nConfusion matrix:")
 cm = (confusion_matrix(y_test_f, y_predicted))
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)# Set class labels
-disp.plot(cmap="Blues") # Set color map
-plt.title("Confusion Matrix — XGBoost") # Set title
-plt.show() # Display plot
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot(cmap="Blues") 
+plt.title("Confusion Matrix — Random Forest Base") 
+plt.show() 
 print("\nAccuracy):")
 
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import confusion_matrix 
-
 
 ##random forrest tuned
 
@@ -180,28 +170,11 @@ print(f"AUC-ROC: {auc:.3f}")
 
 print("\nConfusion matrix:")
 cm = (confusion_matrix(y_test_f, y_predicted))
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)# Set class labels
-disp.plot(cmap="Blues") # Set color map
-plt.title("Confusion Matrix — XGBoost") # Set title
-plt.show() # Display plot
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot(cmap="Blues") 
+plt.title("Confusion Matrix — Random Forest Tuned") 
+plt.show() 
 print("\nAccuracy):")
-
-
-
-## all states equally important
-states = x_train_f.columns[-54:] 
-States_subset = x_train_f[states]
-importances= best_model.feature_importances_
-imp_subset = importances[-54]
-
-
-feature_importance_df = pd.DataFrame({
-    'Feature': states,
-    'Importance': imp_subset
-})
-
-feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
-print(feature_importance_df)
 
 
 ##XGboost base
@@ -215,15 +188,15 @@ dtest  = xgb.DMatrix(data=x_test_f,  label=y_test_f)
 
 
 params = {
-        "objective": "binary:logistic", # Set objective
-        "eval_metric": ["aucpr", "logloss"],  # Track both AUC and error
-        "seed": 42, # set seed
+        "objective": "binary:logistic", 
+        "eval_metric": ["aucpr", "logloss"],  
+        "seed": 42, 
         'scale_pos_weight':scaled_weight,
         'eta': 0.1
 
 
     }
-num_boost_round = 300# Set number of rounds
+num_boost_round = 300
 
 watchlist = [(dtrain, "train")] 
 base_xgb = xgb.train(params, 
@@ -234,9 +207,7 @@ base_xgb = xgb.train(params,
                     verbose_eval=50)
 
 
-
-
-test_pred = base_xgb.predict(dtest) # Create predictions
+test_pred = base_xgb.predict(dtest)
 
 
 
@@ -249,10 +220,10 @@ test_pred_cls = (test_pred >= 0.5).astype(int)
 
 print("\nConfusion matrix:")
 cm = (confusion_matrix(y_test_f, test_pred_cls))
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)# Set class labels
-disp.plot(cmap="Blues") # Set color map
-plt.title("Confusion Matrix — XGBoost") # Set title
-plt.show() # Display plot
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot(cmap="Blues") 
+plt.title("Confusion Matrix — XGBoost Base") 
+plt.show() 
 print("\nAccuracy):")
 print(classification_report(y_test_f, test_pred_cls))
 
@@ -321,8 +292,7 @@ tuned_params = {
     "max_depth": best_max_depth,
     "min_child_weight": best_child_weight,
      'scale_pos_weight': scaled_weight, 
-     # Set scale pos weight
-       "objective": "binary:logistic", # Set objective
+       "objective": "binary:logistic", 
        "eval_metric": ["auc", "error"]
 }
 xgb_tuned = xgb.train(
@@ -354,7 +324,7 @@ print("\nConfusion matrix:")
 cm = (confusion_matrix(y_test_f, test_pred_cls2))
 disp = ConfusionMatrixDisplay(confusion_matrix=cm)
 disp.plot(cmap="Blues") 
-plt.title("Confusion Matrix — XGBoost") 
+plt.title("Confusion Matrix — XGBoost Tuned") 
 plt.show() 
 print("\nAccuracy):")
 print(classification_report(y_test_f, test_pred_cls2))
